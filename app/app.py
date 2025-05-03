@@ -4,8 +4,7 @@ from langchain_ollama.llms import OllamaLLM
 import asyncio
 
 from chatbot import get_llm_response
-
-st.title("DocQA with LLM and RAG")
+from document_extractor import extract_text
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -13,6 +12,28 @@ if "messages" not in st.session_state:
 
 if "llm" not in st.session_state:
     st.session_state.llm = OllamaLLM(model="llama3.2:1b")
+
+if "uploaded_files" not in st.session_state:
+    st.session_state.uploaded_files = []
+
+st.title("DocQA with LLM and RAG")
+
+with st.sidebar:
+    uploaded_files = st.file_uploader(
+        label="Choose a file",
+        type="pdf",
+        accept_multiple_files=True
+    )
+    if uploaded_files is not None:
+        for file in uploaded_files:
+            if file not in st.session_state.uploaded_files:
+                print(file)
+                st.session_state.uploaded_files.append(file)
+
+                file_texts = extract_text(file)
+
+                print(f"File: {file.name}\n", file_texts["page_1"])
+
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
