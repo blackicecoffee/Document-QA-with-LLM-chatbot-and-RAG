@@ -11,7 +11,11 @@ def add_doc(collection: Collection, docs_texts: list[str]):
 def query_doc(collection: Collection, text: str):
     results = collection.query(
         query_texts=[text],
-        n_results=1
+        n_results=2
     )
 
-    return results["documents"][0][0]
+    final_results = ""
+    for idx, result in enumerate(results["documents"][0], start=1):
+        final_results += f"----- Resource {idx} -----\n{result}\n\n"
+
+    return final_results

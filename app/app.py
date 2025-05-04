@@ -35,11 +35,9 @@ with st.sidebar:
     if uploaded_files is not None:
         for file in uploaded_files:
             if file not in st.session_state.uploaded_files:
-                print(file)
                 st.session_state.uploaded_files.append(file)
 
                 file_texts = extract_text(file)
-                # print(list(file_texts.values()))
 
                 processed_file_text = text_processing(list(file_texts.values()))
                 
@@ -55,6 +53,10 @@ for message in st.session_state.messages:
 # Accept user input
 if prompt := st.chat_input("Enter something..."):
     # Add user query into chat history
+    context = query_doc(collection=st.session_state.chroma_collection, text=prompt)
+
+    template = f"""Instructions: Base on the given context, answer the question of user\n\nContext: {context}\n\nQuestion: {prompt}\n"""
+    
     st.session_state.messages.append(
         {
             "role": "user",
@@ -70,7 +72,7 @@ if prompt := st.chat_input("Enter something..."):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop=loop)
         
-        response = loop.run_until_complete(get_llm_response(llm=st.session_state.llm, prompt=prompt))
+        response = loop.run_until_complete(get_llm_response(llm=st.session_state.llm, prompt=template))
 
         st.markdown(response)
 
