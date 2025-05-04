@@ -1,17 +1,25 @@
 import streamlit as st
 from langchain_ollama.llms import OllamaLLM
+import chromadb
 
 import asyncio
 
 from chatbot import get_llm_response
 from document_extractor import extract_text
+from preprocess import text_processing
+from vectordb import add_doc, query_doc
 
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Initialize LLM chatbot
 if "llm" not in st.session_state:
     st.session_state.llm = OllamaLLM(model="llama3.2:1b")
+
+# Initialize vector database
+if "chroma_collection" not in st.session_state:
+    st.session_state.chroma_collection = chromadb.Client().get_or_create_collection(name="docs_collection")
 
 if "uploaded_files" not in st.session_state:
     st.session_state.uploaded_files = []
@@ -31,9 +39,13 @@ with st.sidebar:
                 st.session_state.uploaded_files.append(file)
 
                 file_texts = extract_text(file)
+                # print(list(file_texts.values()))
 
-                print(f"File: {file.name}\n", file_texts["page_1"])
+                processed_file_text = text_processing(list(file_texts.values()))
+                
+                processed_file_text = list(map(lambda x: x.page_content, processed_file_text))
 
+                add_doc(collection=st.session_state.chroma_collection, docs_texts=processed_file_text)
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
