@@ -4,7 +4,9 @@
 
 1. Create virtual environment: `python -m venv <your_environment_name>`
 
-2. Run virtual environment: `.\<your_environment_name>\Scripts\activate` or `source <your_environment_name>/bin/activate`
+2. Run virtual environment: 
+- On Windows: `.\<your_environment_name>\Scripts\activate`
+- On Macs/Linux: `source <your_environment_name>/bin/activate`
 
 3. Install required packages: `pip install -r requirements.txt`
 
