@@ -4,10 +4,10 @@ import chromadb
 
 import asyncio
 
-from chatbot import get_llm_response
-from document_extractor import extract_text
-from preprocess import text_processing
-from vectordb import add_doc, query_doc
+from .chatbot import get_llm_response
+from .document_extractor import extract_text
+from .preprocess import text_processing
+from .vectordb import add_doc, query_doc
 
 # Initialize chat history
 if "messages" not in st.session_state:
